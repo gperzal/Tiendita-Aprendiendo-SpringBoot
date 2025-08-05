@@ -1,0 +1,7 @@
+# Configuración base y activación de perfil
+
+spring:
+  application:
+    name: tiendita
+  profiles:
+    active: local   # Cambia a 'dev' si quieres activar otro entorno

@@ -1,0 +1,19 @@
+# Para desarrollo local (localhost, root, sin contraseña)
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # Podemos desactivar Hibernate DDL auto y forzar que Spring use nuestro script SQL
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  sql:
+    init:
+      mode: never  # o always si quieres que cargue schema.sql en cada arranque
+      schema-locations: classpath:schema.sql
+
