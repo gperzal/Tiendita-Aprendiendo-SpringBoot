@@ -32,3 +32,16 @@ Cada carpeta representa una versión del proyecto, mostrando mejoras progresivas
 - Implementación de **Spring Security** con autenticación **JWT**.
 - Roles y control de acceso a endpoints.
 - Configuración modular con `.env` y buenas prácticas de seguridad.
+
+### **v5 - Documentación con Swagger y OpenAPI**
+- Integración de Springdoc OpenAPI 3 y Swagger UI.
+- Documentación modular por dominio: clientes, productos, usuarios.
+- Exposición de /swagger-ui.html y /v3/api-docs públicas para desarrollo.
+- Preparación de YAMLs modulares (clientes.yaml, productos.yaml, usuarios.yaml) para generar un openapi.yaml principal.
+
+### **v6 - Pruebas Unitarias y de Integración**
+- Configuración de JUnit 5 y Mockito para pruebas unitarias de servicios.
+- Uso de Spring Boot Test para pruebas de integración de controladores y repositorios.
+- Introducción de coverage mínimo y reportes.
+- Posible integración de Testcontainers para pruebas con base de datos real.
+- Pipeline CI/CD con ejecución automática de pruebas.
