@@ -1,0 +1,167 @@
+
+paths:
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      description: Crea un nuevo usuario con rol `ROLE_USER` por defecto.
+      tags:
+        - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado correctamente (sin token)
+        '400':
+          description: Email ya registrado o datos inválidos
+
+  /auth/login:
+    post:
+      summary: Autenticación de usuario
+      description: Valida credenciales y devuelve un JWT con roles asociados.
+      tags:
+        - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso, devuelve token y datos de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+
+  /api/usuarios:
+    get:
+      summary: Obtener todos los usuarios
+      description: Retorna la lista de usuarios registrados. Requiere `ROLE_ADMIN`.
+      tags:
+        - Usuarios
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+        '403':
+          description: Acceso prohibido
+
+  /api/usuarios/{id}:
+    get:
+      summary: Obtener usuario por ID
+      description: Retorna la información de un usuario específico. Requiere `ROLE_ADMIN`.
+      tags:
+        - Usuarios
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado
+        '403':
+          description: Acceso prohibido
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Carlos Admin
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["ROLE_ADMIN", "ROLE_USER"]
+
+    RegisterRequest:
+      type: object
+      required:
+        - nombre
+        - email
+        - password
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          format: password
+          example: secret123
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          format: password
+          example: secret123
+
+    LoginResponse:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["ROLE_USER"]

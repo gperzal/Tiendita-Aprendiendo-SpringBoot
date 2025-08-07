@@ -1,0 +1,453 @@
+openapi: 3.1.0
+info:
+  title: Tiendita API
+  version: 1.0.0
+  description: Documentación combinada de los módulos de la API
+paths:
+  /api/clientes:
+    get:
+      summary: Obtener todos los clientes
+      description: Retorna la lista completa de clientes registrados.
+      tags:
+      - Clientes
+      responses:
+        '200':
+          description: Lista de clientes obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+    post:
+      summary: Crear un nuevo cliente
+      description: Registra un nuevo cliente en el sistema. Requiere autenticación.
+      tags:
+      - Clientes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '201':
+          description: Cliente creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '400':
+          description: Datos inválidos en la solicitud
+  /api/clientes/{id}:
+    get:
+      summary: Obtener cliente por ID
+      description: Retorna la información de un cliente específico.
+      tags:
+      - Clientes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '404':
+          description: Cliente no encontrado
+    put:
+      summary: Actualizar cliente
+      description: Modifica los datos de un cliente existente.
+      tags:
+      - Clientes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '200':
+          description: Cliente actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Cliente no encontrado
+    delete:
+      summary: Eliminar cliente
+      description: Elimina un cliente por su ID. Solo accesible para administradores.
+      tags:
+      - Clientes
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: Cliente eliminado correctamente
+        '404':
+          description: Cliente no encontrado
+  /api/productos:
+    get:
+      summary: Obtener todos los productos
+      description: Retorna la lista completa de productos disponibles.
+      tags:
+      - Productos
+      responses:
+        '200':
+          description: Lista de productos obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+    post:
+      summary: Crear un nuevo producto
+      description: Registra un nuevo producto. Requiere `ROLE_ADMIN`.
+      tags:
+      - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoRequest'
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Datos inválidos en la solicitud
+        '401':
+          description: No autorizado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+  /api/productos/{id}:
+    get:
+      summary: Obtener producto por ID
+      description: Retorna la información de un producto específico.
+      tags:
+      - Productos
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '404':
+          description: Producto no encontrado
+    put:
+      summary: Actualizar producto
+      description: Modifica los datos de un producto existente. Requiere `ROLE_ADMIN`.
+      tags:
+      - Productos
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoRequest'
+      responses:
+        '200':
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Producto no encontrado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+    delete:
+      summary: Eliminar producto
+      description: Elimina un producto por su ID. Solo accesible para administradores.
+      tags:
+      - Productos
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: Producto eliminado correctamente
+        '404':
+          description: Producto no encontrado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+  /auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      description: Crea un nuevo usuario con rol `ROLE_USER` por defecto.
+      tags:
+      - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Usuario registrado correctamente (sin token)
+        '400':
+          description: Email ya registrado o datos inválidos
+  /auth/login:
+    post:
+      summary: Autenticación de usuario
+      description: Valida credenciales y devuelve un JWT con roles asociados.
+      tags:
+      - Usuarios
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso, devuelve token y datos de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+  /api/usuarios:
+    get:
+      summary: Obtener todos los usuarios
+      description: Retorna la lista de usuarios registrados. Requiere `ROLE_ADMIN`.
+      tags:
+      - Usuarios
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+        '403':
+          description: Acceso prohibido
+  /api/usuarios/{id}:
+    get:
+      summary: Obtener usuario por ID
+      description: Retorna la información de un usuario específico. Requiere `ROLE_ADMIN`.
+      tags:
+      - Usuarios
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuario no encontrado
+        '403':
+          description: Acceso prohibido
+components:
+  schemas:
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan.perez@example.com
+        telefono:
+          type: string
+          example: +51 999 888 777
+        direccion:
+          type: string
+          example: Av. Principal 123
+        creadoEn:
+          type: string
+          format: date-time
+          example: 2025-08-05 15:00:00+00:00
+    ClienteRequest:
+      type: object
+      required:
+      - nombre
+      - email
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan.perez@example.com
+        telefono:
+          type: string
+          example: +51 999 888 777
+        direccion:
+          type: string
+          example: Av. Principal 123
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Laptop Gamer
+        descripcion:
+          type: string
+          example: Laptop con procesador Intel i7 y 16GB de RAM
+        precio:
+          type: number
+          format: float
+          example: 2499.99
+        stock:
+          type: integer
+          example: 15
+        creadoEn:
+          type: string
+          format: date-time
+          example: 2025-08-05 15:00:00+00:00
+    ProductoRequest:
+      type: object
+      required:
+      - nombre
+      - precio
+      properties:
+        nombre:
+          type: string
+          example: Laptop Gamer
+        descripcion:
+          type: string
+          example: Laptop con procesador Intel i7 y 16GB de RAM
+        precio:
+          type: number
+          format: float
+          example: 2499.99
+        stock:
+          type: integer
+          example: 15
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Carlos Admin
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        roles:
+          type: array
+          items:
+            type: string
+          example:
+          - ROLE_ADMIN
+          - ROLE_USER
+    RegisterRequest:
+      type: object
+      required:
+      - nombre
+      - email
+      - password
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          format: password
+          example: secret123
+    LoginRequest:
+      type: object
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        password:
+          type: string
+          format: password
+          example: secret123
+    LoginResponse:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiJ9...
+        roles:
+          type: array
+          items:
+            type: string
+          example:
+          - ROLE_USER

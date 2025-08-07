@@ -1,0 +1,8 @@
+openapi: 3.1.0
+info:
+  title: API de Clientes - Tiendita v5
+  version: "1.0.0"
+  description: Endpoints para la gestión de clientes en Tiendita.
+
+paths: {}
+components: {}

@@ -1,0 +1,152 @@
+
+paths:
+  /api/clientes:
+    get:
+      summary: Obtener todos los clientes
+      description: Retorna la lista completa de clientes registrados.
+      tags:
+        - Clientes
+      responses:
+        '200':
+          description: Lista de clientes obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+
+    post:
+      summary: Crear un nuevo cliente
+      description: Registra un nuevo cliente en el sistema. Requiere autenticación.
+      tags:
+        - Clientes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '201':
+          description: Cliente creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '400':
+          description: Datos inválidos en la solicitud
+
+  /api/clientes/{id}:
+    get:
+      summary: Obtener cliente por ID
+      description: Retorna la información de un cliente específico.
+      tags:
+        - Clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '404':
+          description: Cliente no encontrado
+
+    put:
+      summary: Actualizar cliente
+      description: Modifica los datos de un cliente existente.
+      tags:
+        - Clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteRequest'
+      responses:
+        '200':
+          description: Cliente actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Cliente no encontrado
+
+    delete:
+      summary: Eliminar cliente
+      description: Elimina un cliente por su ID. Solo accesible para administradores.
+      tags:
+        - Clientes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Cliente eliminado correctamente
+        '404':
+          description: Cliente no encontrado
+
+components:
+  schemas:
+    Cliente:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan.perez@example.com
+        telefono:
+          type: string
+          example: "+51 999 888 777"
+        direccion:
+          type: string
+          example: Av. Principal 123
+        creadoEn:
+          type: string
+          format: date-time
+          example: 2025-08-05T15:00:00Z
+
+    ClienteRequest:
+      type: object
+      required:
+        - nombre
+        - email
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan.perez@example.com
+        telefono:
+          type: string
+          example: "+51 999 888 777"
+        direccion:
+          type: string
+          example: Av. Principal 123
