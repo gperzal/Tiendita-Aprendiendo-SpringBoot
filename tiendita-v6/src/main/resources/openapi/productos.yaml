@@ -1,0 +1,160 @@
+
+paths:
+  /api/productos:
+    get:
+      summary: Obtener todos los productos
+      description: Retorna la lista completa de productos disponibles.
+      tags:
+        - Productos
+      responses:
+        '200':
+          description: Lista de productos obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
+
+    post:
+      summary: Crear un nuevo producto
+      description: Registra un nuevo producto. Requiere `ROLE_ADMIN`.
+      tags:
+        - Productos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoRequest'
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Datos inválidos en la solicitud
+        '401':
+          description: No autorizado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+
+  /api/productos/{id}:
+    get:
+      summary: Obtener producto por ID
+      description: Retorna la información de un producto específico.
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '404':
+          description: Producto no encontrado
+
+    put:
+      summary: Actualizar producto
+      description: Modifica los datos de un producto existente. Requiere `ROLE_ADMIN`.
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductoRequest'
+      responses:
+        '200':
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Producto'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Producto no encontrado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+
+    delete:
+      summary: Eliminar producto
+      description: Elimina un producto por su ID. Solo accesible para administradores.
+      tags:
+        - Productos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Producto eliminado correctamente
+        '404':
+          description: Producto no encontrado
+        '403':
+          description: Prohibido (se requiere rol administrador)
+
+components:
+  schemas:
+    Producto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: Laptop Gamer
+        descripcion:
+          type: string
+          example: Laptop con procesador Intel i7 y 16GB de RAM
+        precio:
+          type: number
+          format: float
+          example: 2499.99
+        stock:
+          type: integer
+          example: 15
+        creadoEn:
+          type: string
+          format: date-time
+          example: 2025-08-05T15:00:00Z
+
+    ProductoRequest:
+      type: object
+      required:
+        - nombre
+        - precio
+      properties:
+        nombre:
+          type: string
+          example: Laptop Gamer
+        descripcion:
+          type: string
+          example: Laptop con procesador Intel i7 y 16GB de RAM
+        precio:
+          type: number
+          format: float
+          example: 2499.99
+        stock:
+          type: integer
+          example: 15
